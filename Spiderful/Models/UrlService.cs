@@ -33,10 +33,14 @@ namespace Spiderful.Models
             }
             else
             {
-
                 UriBuilder link = new UriBuilder(url);
                 return isValid(link.Uri.ToString());
             }
+        }
+
+        public static Enumerable getUrls(int level=0)
+        {
+
         }
     }
 }
