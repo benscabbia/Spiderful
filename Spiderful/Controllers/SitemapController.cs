@@ -21,42 +21,19 @@ namespace Spiderful.Controllers
         // GET api/sitemap/5 if Get(int id)
         // GET api/sitemap?url=http://www.google.com for below
         //    /api/sitemap?url=http://www.google.com/index.net&level=15&isOnSite=false
-        public string Get(string url, int level=0, bool isOnSite=true)
+        public string GetLinks(string url, int level=0, bool isOnSite=true)
         {
+            //string formatted_url = UrlService.urlFormatter(url);
 
-            //class source
-            //funct(url, n, bool)
-            //service.checkandform(url)
-            //if (url is ok)
-            //list = service.getallpages(url)
+            string a = "http://www.google.com";
+            string b = "google.com";
+            string c = "homePage";
+            //string formated1 = UrlService.urlFormatter(a);
+            //string formated2 = UrlService.urlFormatter(b);
+            string formated3 = UrlService.urlFormatter(c, a);
 
-            //Uri uriResult;
-            //bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-            //List<string> hrefTags = new List<string>();
-            //if (result)
-            //{
-
-            //    HtmlWeb hw = new HtmlWeb();
-            //    HtmlDocument doc = hw.Load(url);
-            //    foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
-            //    {
-            //        HtmlAttribute att = link.Attributes["href"];
-            //        if (!String.IsNullOrEmpty(att.Value))
-            //        {
-            //            hrefTags.Add(att.Value);
-            //        }
-                    
-            //    }
-
-            //    foreach(var a in hrefTags)
-            //    {
-            //        System.Diagnostics.Debug.WriteLine(a.ToString());
-            //    }
-
-            //}
-
-
-            return "result: " + UrlService.isValidSmart(url);
+            
+            return "result: "; //+ UrlService.isValidSmart(url);
 
             //http://stackoverflow.com/questions/2248411/get-all-links-on-html-page
             //https://htmlagilitypack.codeplex.com/downloads/get/120935#

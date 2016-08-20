@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using HtmlAgilityPack;
+using System.Collections;
 
 namespace Spiderful.Models
 {
@@ -14,32 +15,63 @@ namespace Spiderful.Models
         /// </summary>
         /// <param name="url">A string representing the URL</param>
         /// <returns>A boolean determining if the URL is valud</returns>
-        public static bool isValid(string url)
+        private static bool isValid(string url)
         {
             Uri uriResult;
             return Uri.TryCreate(url, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
-        /// <summary>
-        /// A method used to determine whether a URL is valid, regardless if it has a scheme. 
-        /// Valid URL's include: www.test.com, test.ocm, test.com/page1/page2 and all of isValid
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static bool isValidSmart(string url)
+
+        public static string urlFormatter(string url, string rootUrl = null)
         {
-            if (isValid(url))
+            //url is ok, return
+            if ((isValid(url) && url.Contains('.')) || string.IsNullOrEmpty(url)) return url;
+
+            //no root url, try and repair url
+            if (string.IsNullOrEmpty(rootUrl))
             {
-                return true;
+                //url is not ok - tries to convert google.com -> http://google.com
+                UriBuilder link = new UriBuilder(url);
+                string generatedUrl = link.Uri.ToString();
+                if (isValid(generatedUrl) && generatedUrl.Contains('.')) return generatedUrl;
             }
             else
             {
-                UriBuilder link = new UriBuilder(url);
-                return isValid(link.Uri.ToString());
+                //assuming there is a root url, and so could be something lile /contacts, /info, /abc/def
+                string fullUrl = "";
+                if (isValid(rootUrl))
+                {
+                    if (url.StartsWith("/") || rootUrl.EndsWith("/")) fullUrl = rootUrl + url;
+                    else fullUrl = rootUrl + "/" + url;
+
+                    if (isValid(fullUrl) && fullUrl.Contains('.')) return fullUrl;
+                }
             }
+            return ""; ;
         }
 
-        public static Enumerable getUrls(int level=0)
+        public static IEnumerable getUrls(string url, int level = 0)
         {
+
+            HtmlDocument doc = new HtmlWeb().Load(url);
+
+            //var linkTags = doc.DocumentNode.Descendants("link");
+            var linkedPages = doc.DocumentNode.Descendants("a")
+                                              .Select(a => a.GetAttributeValue("href", null))
+                                              .Where(u => !String.IsNullOrEmpty(u));
+
+            List<string> pageUncheckedUrl = new List<string>();
+
+
+            //foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+            //{
+            //    HtmlAttribute att = link.Attributes["href"];
+            //    if (!String.IsNullOrEmpty(att.Value))
+            //    {
+            //        pageUncheckedUrl.Add(att.Value);
+            //    }               
+            //}
+
+            return linkedPages;
 
         }
     }
