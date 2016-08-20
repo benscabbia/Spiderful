@@ -23,14 +23,14 @@ namespace Spiderful.Controllers
         //    /api/sitemap?url=http://www.google.com/index.net&level=15&isOnSite=false
         public string GetLinks(string url, int level=0, bool isOnSite=true)
         {
-            //string formatted_url = UrlService.urlFormatter(url);
+            //string formatted_url = UrlService.urlFormatValidator(url);
 
             string a = "http://www.google.com";
             string b = "google.com";
             string c = "homePage";
-            //string formated1 = UrlService.urlFormatter(a);
-            //string formated2 = UrlService.urlFormatter(b);
-            string formated3 = UrlService.urlFormatter(c, a);
+            //string formated1 = UrlService.urlFormatValidator(a);
+            //string formated2 = UrlService.urlFormatValidator(b);
+            string formated3 = UrlService.urlFormatValidator(c, a);
 
             
             return "result: "; //+ UrlService.isValidSmart(url);

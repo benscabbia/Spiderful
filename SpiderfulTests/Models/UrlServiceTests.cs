@@ -21,10 +21,10 @@ namespace Spiderful.Models.Tests
             string expected3 = "http://www.google.com";
             string expected4 = "http://www.google.com";
 
-            string result1 = UrlService.urlFormatter("http://google.com");
-            string result2 = UrlService.urlFormatter("https://google.com");
-            string result3 = UrlService.urlFormatter("http://www.google.com");
-            string result4 = UrlService.urlFormatter("http://www.google.com");
+            string result1 = UrlService.urlFormatValidator("http://google.com");
+            string result2 = UrlService.urlFormatValidator("https://google.com");
+            string result3 = UrlService.urlFormatValidator("http://www.google.com");
+            string result4 = UrlService.urlFormatValidator("http://www.google.com");
 
             Assert.AreEqual(expected1, result1);
             Assert.AreEqual(expected2, result2);
@@ -38,10 +38,10 @@ namespace Spiderful.Models.Tests
             string expected7 = "http://google.co.uk/helloSir/";
             string expected8 = "http://www.google.cc/";
 
-            string result5 = UrlService.urlFormatter("google.com");
-            string result6 = UrlService.urlFormatter("next.it");
-            string result7 = UrlService.urlFormatter("google.co.uk/helloSir/");
-            string result8 = UrlService.urlFormatter("www.google.cc");
+            string result5 = UrlService.urlFormatValidator("google.com");
+            string result6 = UrlService.urlFormatValidator("next.it");
+            string result7 = UrlService.urlFormatValidator("google.co.uk/helloSir/");
+            string result8 = UrlService.urlFormatValidator("www.google.cc");
 
             Assert.AreEqual(expected5, result5);
             Assert.AreEqual(expected6, result6);
@@ -56,10 +56,10 @@ namespace Spiderful.Models.Tests
             string expected3 = "https://google.co.uk/helloSir";
             string expected4 = "https://www.google.cc/testa/testb";
 
-            string result1 = UrlService.urlFormatter("myPage", "http://google.com");
-            string result2 = UrlService.urlFormatter("tech/contact/", "https://www.next.it");
-            string result3 = UrlService.urlFormatter("/helloSir", "https://google.co.uk");
-            string result4 = UrlService.urlFormatter("/testa/testb", "https://www.google.cc");
+            string result1 = UrlService.urlFormatValidator("myPage", "http://google.com");
+            string result2 = UrlService.urlFormatValidator("tech/contact/", "https://www.next.it");
+            string result3 = UrlService.urlFormatValidator("/helloSir", "https://google.co.uk");
+            string result4 = UrlService.urlFormatValidator("/testa/testb", "https://www.google.cc");
 
             Assert.AreEqual(expected1, result1);
             Assert.AreEqual(expected2, result2);
@@ -72,10 +72,10 @@ namespace Spiderful.Models.Tests
         {
             string expectedEmpty = "";
 
-            string result1 = UrlService.urlFormatter("myPage", "google.com");
-            string result2 = UrlService.urlFormatter("tech/contact/", "www.google.it");
-            string result3 = UrlService.urlFormatter("/helloSir", "google.co.uk");
-            string result4 = UrlService.urlFormatter("/testa/testb", "www.google.cc");
+            string result1 = UrlService.urlFormatValidator("myPage", "google.com");
+            string result2 = UrlService.urlFormatValidator("tech/contact/", "www.google.it");
+            string result3 = UrlService.urlFormatValidator("/helloSir", "google.co.uk");
+            string result4 = UrlService.urlFormatValidator("/testa/testb", "www.google.cc");
 
             Assert.AreEqual(expectedEmpty, result1);
             Assert.AreEqual(expectedEmpty, result2);
@@ -88,12 +88,12 @@ namespace Spiderful.Models.Tests
         {
             string expectedEmpty = "";
 
-            string result1 = UrlService.urlFormatter("htp:/");
-            string result2 = UrlService.urlFormatter("");
-            string result3 = UrlService.urlFormatter("htp://google.com");
-            string result4 = UrlService.urlFormatter("google");
-            string result5 = UrlService.urlFormatter("http://google");
-            string result6 = UrlService.urlFormatter("https://google");
+            string result1 = UrlService.urlFormatValidator("htp:/");
+            string result2 = UrlService.urlFormatValidator("");
+            string result3 = UrlService.urlFormatValidator("htp://google.com");
+            string result4 = UrlService.urlFormatValidator("google");
+            string result5 = UrlService.urlFormatValidator("http://google");
+            string result6 = UrlService.urlFormatValidator("https://google");
 
             Assert.AreEqual(expectedEmpty, result1);
             Assert.AreEqual(expectedEmpty, result2);
@@ -102,5 +102,6 @@ namespace Spiderful.Models.Tests
             Assert.AreEqual(expectedEmpty, result5);
             Assert.AreEqual(expectedEmpty, result6);
         }
+        
     }
 }

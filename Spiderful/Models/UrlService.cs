@@ -21,7 +21,14 @@ namespace Spiderful.Models
             return Uri.TryCreate(url, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
-        public static string urlFormatter(string url, string rootUrl = null)
+        /// <summary>
+        /// A method which checks a url is well formatted and attempts to repair if not 
+        /// It also provides a secondary function of constructing a partial url and root (i.e. myPage + http://google.com)
+        /// </summary>
+        /// <param name="url">The url to be checked</param>
+        /// <param name="rootUrl">An optional url specifying the method will format the URL</param>
+        /// <returns>A formatted URL if successful, an empty string if unsuccessful</returns>
+        public static string urlFormatValidator(string url, string rootUrl = null)
         {
             //url is ok, return
             if ((isValid(url) && url.Contains('.')) || string.IsNullOrEmpty(url)) return url;
@@ -51,7 +58,11 @@ namespace Spiderful.Models
 
         public static IEnumerable getUrls(string url, int level = 0)
         {
-
+            string formattedUrl = urlFormatValidator(url);
+            
+            //if formattedUrl is empty, url is no broken
+            if (string.IsNullOrEmpty(formattedUrl)) return "";
+            
             HtmlDocument doc = new HtmlWeb().Load(url);
 
             //var linkTags = doc.DocumentNode.Descendants("link");
