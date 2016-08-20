@@ -50,7 +50,7 @@ namespace Spiderful.Models.Tests
         }
         [TestMethod]
         public void urlFormatterTest_secondParam()
-        {           
+        {
             string expected1 = "http://google.com/myPage";
             string expected2 = "https://www.next.it/tech/contact/";
             string expected3 = "https://google.co.uk/helloSir";
@@ -102,6 +102,11 @@ namespace Spiderful.Models.Tests
             Assert.AreEqual(expectedEmpty, result5);
             Assert.AreEqual(expectedEmpty, result6);
         }
-        
+
+        [TestMethod()]
+        public void getUrlsTest()
+        {
+            //Assert.Fail();
+        }
     }
 }
