@@ -59,9 +59,11 @@ namespace Spiderful.Models
         /// <summary>
         /// A method which returns all pages for a given url
         /// </summary>
-        /// <param name="url">A string containing the URL</param>
-        /// <returns>A list of all Pages (a href) for the given URL</returns>
-        public static IEnumerable<string> getPages(string url, bool isOnSite=false, bool validatePages=false)
+        /// <param name="url">A strinct containing the URL to parse</param>
+        /// <param name="hostMatch">A boolean determing whether returned result should contain pages containing host</param>
+        /// <param name="validatePages">A boolean determing whether returned result should contain pages that have been validated</param>
+        /// <returns>A collection of pages</returns>
+        public static IEnumerable<string> getPages(string url, bool hostMatch=false, bool validatePages=false)
         {
             //make sure url is ok
             string formattedUrl = urlFormatValidator(url);
@@ -71,12 +73,35 @@ namespace Spiderful.Models
 
             try
             {
-                HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
+                HtmlDocument doc = new HtmlWeb().Load(formattedUrl); 
                 //var linkTags = doc.DocumentNode.Descendants("link");
                 var linkedPages = doc.DocumentNode.Descendants("a")
                                                   .Select(a => a.GetAttributeValue("href", null))
                                                   .Where(u => !String.IsNullOrEmpty(u))
                                                   .Distinct();
+
+                IEnumerable<string> linkedPagesHost = null, linkedPagesValidated = null, linkedPagesValidatedHost = null;                
+
+                if (hostMatch)
+                {
+                    var urlHost = new Uri(formattedUrl).Host;
+                    if (urlHost.Substring(0, 4).Equals("www.")) urlHost = urlHost.Substring(4);
+                    //var linkedPagesHost = linkedPages.Where(a => urlHost.All(a.Contains));
+                    linkedPagesHost = linkedPages.Where(a => a.Contains(urlHost));
+                    if (!validatePages) return linkedPagesHost;
+                }
+
+                if (validatePages)
+                {
+                    linkedPagesValidated = linkedPages.Where(p => isValid(p) == true);
+                    if (!hostMatch) return linkedPagesValidated;
+                }
+
+                if(hostMatch && validatePages)
+                {
+                    linkedPagesValidatedHost = linkedPagesHost.Intersect(linkedPagesValidated);
+                    return linkedPagesValidatedHost;
+                }
                 return linkedPages;
             }
             catch(System.Net.WebException wex)

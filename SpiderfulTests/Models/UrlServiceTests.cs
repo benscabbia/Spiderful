@@ -150,5 +150,8 @@ namespace Spiderful.Models.Tests
                 Assert.Fail("Two sites should have over 100 results, possibly sites are down or something else...");
             }
         }
+
+        //TODO rename tests to getPages
+        //TODO tests for getPages containing more than 1 param
     }
 }

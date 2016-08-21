@@ -20,12 +20,12 @@ namespace Spiderful.Controllers
 
         // GET api/sitemap/5 if Get(int id)
         // GET api/sitemap?url=http://www.google.com for below
-        //    /api/sitemap?url=http://www.google.com/index.net&level=15&isOnSite=false
-        public IEnumerable<string> GetLinks(string url, int level = 0, bool isOnSite = false, bool validatePages = false)
+        //    /api/sitemap?url=http://www.google.com/index.net&level=15&hostMatch=false
+        public IEnumerable<string> GetLinks(string url, int level = 0, bool hostMatch = false, bool validatePages = false)
         {
 
 
-            var linksRoot = UrlService.getPages(url, isOnSite, validatePages);
+            var linksRoot = UrlService.getPages(url, hostMatch, validatePages);
 
             
             return linksRoot; //+ UrlService.isValidSmart(url);
