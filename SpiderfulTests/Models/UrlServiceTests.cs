@@ -106,10 +106,10 @@ namespace Spiderful.Models.Tests
         [TestMethod()]
         public void getUrlsTest_simpleTest()
         {            
-            List<string> urls1 = UrlService.getUrls("http://example.com/").ToList();
-            List<string> urls2 = UrlService.getUrls("example.com/").ToList();
-            List<string> urls3 = UrlService.getUrls("www.example.com/").ToList();
-            List<string> urls4 = UrlService.getUrls("http://www.example.com/").ToList();
+            List<string> urls1 = UrlService.getPages("http://example.com/").ToList();
+            List<string> urls2 = UrlService.getPages("example.com/").ToList();
+            List<string> urls3 = UrlService.getPages("www.example.com/").ToList();
+            List<string> urls4 = UrlService.getPages("http://www.example.com/").ToList();
 
             Assert.AreEqual(urls1.Count, 1);
             Assert.AreEqual(urls1.First(), "http://www.iana.org/domains/example");
@@ -130,9 +130,9 @@ namespace Spiderful.Models.Tests
         {
             var emptyList = Enumerable.Empty<string>();
 
-            IEnumerable<string> urls1 = UrlService.getUrls("g.ebay.com/");
-            IEnumerable<string> urls2 = UrlService.getUrls("ebay");
-            IEnumerable<string> urls3 = UrlService.getUrls("");
+            IEnumerable<string> urls1 = UrlService.getPages("g.ebay.com/");
+            IEnumerable<string> urls2 = UrlService.getPages("ebay");
+            IEnumerable<string> urls3 = UrlService.getPages("");
 
             Assert.AreEqual(urls1, emptyList);
             Assert.AreEqual(urls2, emptyList);
@@ -142,9 +142,9 @@ namespace Spiderful.Models.Tests
         [TestMethod()]
         public void getUrlsTest_largeSite()
         {
-            int ebay = UrlService.getUrls("ebay.co.uk/").Count();
-            int stack = UrlService.getUrls("http://stackoverflow.com").Count();
-
+            int ebay = UrlService.getPages("ebay.co.uk/").Count();
+            int stack = UrlService.getPages("http://stackoverflow.com").Count();
+                       
             if (ebay + stack < 100)
             {
                 Assert.Fail("Two sites should have over 100 results, possibly sites are down or something else...");

@@ -56,7 +56,12 @@ namespace Spiderful.Models
             return ""; ;
         }
 
-        public static IEnumerable<string> getUrls(string url, int level = 0)
+        /// <summary>
+        /// A method which returns all pages for a given url
+        /// </summary>
+        /// <param name="url">A string containing the URL</param>
+        /// <returns>A list of all Pages (a href) for the given URL</returns>
+        public static IEnumerable<string> getPages(string url, bool isOnSite=false, bool validatePages=false)
         {
             //make sure url is ok
             string formattedUrl = urlFormatValidator(url);
@@ -70,7 +75,8 @@ namespace Spiderful.Models
                 //var linkTags = doc.DocumentNode.Descendants("link");
                 var linkedPages = doc.DocumentNode.Descendants("a")
                                                   .Select(a => a.GetAttributeValue("href", null))
-                                                  .Where(u => !String.IsNullOrEmpty(u));
+                                                  .Where(u => !String.IsNullOrEmpty(u))
+                                                  .Distinct();
                 return linkedPages;
             }
             catch(System.Net.WebException wex)
