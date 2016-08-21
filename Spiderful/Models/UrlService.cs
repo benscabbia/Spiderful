@@ -56,23 +56,38 @@ namespace Spiderful.Models
             return ""; ;
         }
 
-        public static IEnumerable getUrls(string url, int level = 0)
+        public static IEnumerable<string> getUrls(string url, int level = 0)
         {
+            //make sure url is ok
             string formattedUrl = urlFormatValidator(url);
             
-            //if formattedUrl is empty, url is no broken
-            if (string.IsNullOrEmpty(formattedUrl)) return "";
-            
-            HtmlDocument doc = new HtmlWeb().Load(url);
+            //if formattedUrl is empty, url is broken
+            if (string.IsNullOrEmpty(formattedUrl)) return Enumerable.Empty<string>();
 
-            //var linkTags = doc.DocumentNode.Descendants("link");
-            var linkedPages = doc.DocumentNode.Descendants("a")
-                                              .Select(a => a.GetAttributeValue("href", null))
-                                              .Where(u => !String.IsNullOrEmpty(u));
+            try
+            {
+                HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
+                //var linkTags = doc.DocumentNode.Descendants("link");
+                var linkedPages = doc.DocumentNode.Descendants("a")
+                                                  .Select(a => a.GetAttributeValue("href", null))
+                                                  .Where(u => !String.IsNullOrEmpty(u));
+                return linkedPages;
+            }
+            catch(System.Net.WebException wex)
+            {
+                Console.WriteLine("The remote name could not be resolved.");
+                Console.WriteLine(wex);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Something went wrong!");
+                Console.WriteLine(e);
+            }
 
-            List<string> pageUncheckedUrl = new List<string>();
+            return Enumerable.Empty<string>();
 
-
+            //Non-functional way
+            //List<string> pageUncheckedUrl = new List<string>();
             //foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
             //{
             //    HtmlAttribute att = link.Attributes["href"];
@@ -82,7 +97,7 @@ namespace Spiderful.Models
             //    }               
             //}
 
-            return linkedPages;
+            
 
         }
     }

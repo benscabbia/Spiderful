@@ -104,9 +104,51 @@ namespace Spiderful.Models.Tests
         }
 
         [TestMethod()]
-        public void getUrlsTest()
+        public void getUrlsTest_simpleTest()
+        {            
+            List<string> urls1 = UrlService.getUrls("http://example.com/").ToList();
+            List<string> urls2 = UrlService.getUrls("example.com/").ToList();
+            List<string> urls3 = UrlService.getUrls("www.example.com/").ToList();
+            List<string> urls4 = UrlService.getUrls("http://www.example.com/").ToList();
+
+            Assert.AreEqual(urls1.Count, 1);
+            Assert.AreEqual(urls1.First(), "http://www.iana.org/domains/example");
+            Assert.AreEqual(urls2.Count, 1);
+            Assert.AreEqual(urls2.First(), "http://www.iana.org/domains/example");
+            Assert.AreEqual(urls3.Count, 1);
+            Assert.AreEqual(urls3.First(), "http://www.iana.org/domains/example");
+            Assert.AreEqual(urls4.Count, 1);
+            Assert.AreEqual(urls4.First(), "http://www.iana.org/domains/example");
+            //foreach(string u in urls)
+            //{
+            //    System.Diagnostics.Debug.WriteLine(u);
+            //}
+        }
+
+        [TestMethod()]
+        public void getUrlsTest_brokenUrl()
         {
-            //Assert.Fail();
+            var emptyList = Enumerable.Empty<string>();
+
+            IEnumerable<string> urls1 = UrlService.getUrls("g.ebay.com/");
+            IEnumerable<string> urls2 = UrlService.getUrls("ebay");
+            IEnumerable<string> urls3 = UrlService.getUrls("");
+
+            Assert.AreEqual(urls1, emptyList);
+            Assert.AreEqual(urls2, emptyList);
+            Assert.AreEqual(urls3, emptyList);
+        }
+
+        [TestMethod()]
+        public void getUrlsTest_largeSite()
+        {
+            int ebay = UrlService.getUrls("ebay.co.uk/").Count();
+            int stack = UrlService.getUrls("http://stackoverflow.com").Count();
+
+            if (ebay + stack < 100)
+            {
+                Assert.Fail("Two sites should have over 100 results, possibly sites are down or something else...");
+            }
         }
     }
 }
