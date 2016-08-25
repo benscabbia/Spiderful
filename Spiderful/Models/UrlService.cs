@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using HtmlAgilityPack;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Spiderful.Models
 {
@@ -63,7 +65,7 @@ namespace Spiderful.Models
         /// <param name="hostMatch">A boolean determing whether returned result should contain pages containing host</param>
         /// <param name="validatePages">A boolean determing whether returned result should contain pages that have been validated</param>
         /// <returns>A collection of pages</returns>
-        public static IEnumerable<string> getPages(string url, bool hostMatch=false, bool validatePages=false)
+        public static IEnumerable<string> getLinks(string url, bool hostMatch=true, bool validatePages=true, int level=0)
         {
             //make sure url is ok
             string formattedUrl = urlFormatValidator(url);
@@ -71,16 +73,40 @@ namespace Spiderful.Models
             //if formattedUrl is empty, url is broken
             if (string.IsNullOrEmpty(formattedUrl)) return Enumerable.Empty<string>();
 
+
+
+
+            IEnumerable<string> rootUrls = getSinglePageLinks(formattedUrl, hostMatch, validatePages);
+
+
+            //need a better solution to this
+            if (level == 0)
+            {
+                return rootUrls;
+
+            }else if(level == 1)
+            {
+                return getManyPageLinks(rootUrls, hostMatch, validatePages);
+
+            }else{
+                return Enumerable.Empty<string>();
+            }
+
+
+        }
+
+        private static IEnumerable<string> getSinglePageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
+        {
             try
             {
-                HtmlDocument doc = new HtmlWeb().Load(formattedUrl); 
+                HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
                 //var linkTags = doc.DocumentNode.Descendants("link");
                 var linkedPages = doc.DocumentNode.Descendants("a")
                                                   .Select(a => a.GetAttributeValue("href", null))
                                                   .Where(u => !String.IsNullOrEmpty(u))
                                                   .Distinct();
 
-                IEnumerable<string> linkedPagesHost = null, linkedPagesValidated = null, linkedPagesValidatedHost = null;                
+                IEnumerable<string> linkedPagesHost = null, linkedPagesValidated = null, linkedPagesValidatedHost = null;
 
                 if (hostMatch)
                 {
@@ -97,19 +123,19 @@ namespace Spiderful.Models
                     if (!hostMatch) return linkedPagesValidated;
                 }
 
-                if(hostMatch && validatePages)
+                if (hostMatch && validatePages)
                 {
                     linkedPagesValidatedHost = linkedPagesHost.Intersect(linkedPagesValidated);
                     return linkedPagesValidatedHost;
                 }
                 return linkedPages;
             }
-            catch(System.Net.WebException wex)
+            catch (System.Net.WebException wex)
             {
                 Console.WriteLine("The remote name could not be resolved.");
                 Console.WriteLine(wex);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Something went wrong!");
                 Console.WriteLine(e);
@@ -127,8 +153,30 @@ namespace Spiderful.Models
             //        pageUncheckedUrl.Add(att.Value);
             //    }               
             //}
+        }
 
-            
+        private static IEnumerable<string> getManyPageLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
+        {
+            List<Task> tasks = new List<Task>();
+            List<List<string>> allLinks = new List<List<string>>();
+
+            foreach (string rootUrl in rootUrls)
+            {
+                string rootUrlCopy = rootUrl; //http://stackoverflow.com/questions/4684320/starting-tasks-in-foreach-loop-uses-value-of-last-item
+                var task = Task.Factory.StartNew(() =>
+                {
+                    IEnumerable<string> taskResult = getSinglePageLinks(rootUrlCopy, hostMatch, validatePages);
+                    return taskResult;
+                });
+
+                //task.ContinueWith(t => t.Result);
+                tasks.Add(task);
+                allLinks.Add(task.Result.ToList());
+            }
+            //https://msdn.microsoft.com/en-us/library/dd537609.aspx
+
+            Task.WaitAll(tasks.ToArray());
+            return allLinks.SelectMany(x => x).Distinct();            
 
         }
     }

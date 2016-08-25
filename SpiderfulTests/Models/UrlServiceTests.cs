@@ -104,20 +104,21 @@ namespace Spiderful.Models.Tests
         }
 
         [TestMethod()]
-        public void getUrlsTest_simpleTest()
+        public void getPagesTest_simpleTest()
         {            
-            List<string> urls1 = UrlService.getPages("http://example.com/").ToList();
-            List<string> urls2 = UrlService.getPages("example.com/").ToList();
-            List<string> urls3 = UrlService.getPages("www.example.com/").ToList();
-            List<string> urls4 = UrlService.getPages("http://www.example.com/").ToList();
+            List<string> urls1 = UrlService.getLinks("http://example.com/").ToList();
+            List<string> urls1multi = UrlService.getLinks("http://example.com/", false, false).ToList();
+            List<string> urls2 = UrlService.getLinks("example.com/", false, false).ToList();
+            List<string> urls3 = UrlService.getLinks("www.example.com/", false, false).ToList();
+            List<string> urls4 = UrlService.getLinks("http://www.example.com/", false, false).ToList();
 
-            Assert.AreEqual(urls1.Count, 1);
-            Assert.AreEqual(urls1.First(), "http://www.iana.org/domains/example");
-            Assert.AreEqual(urls2.Count, 1);
+            Assert.AreEqual(0, urls1.Count); //0 as host != url so its filtered out
+            Assert.AreEqual(1, urls1multi.Count);            
+            Assert.AreEqual(1, urls2.Count);
             Assert.AreEqual(urls2.First(), "http://www.iana.org/domains/example");
-            Assert.AreEqual(urls3.Count, 1);
+            Assert.AreEqual(1, urls3.Count);
             Assert.AreEqual(urls3.First(), "http://www.iana.org/domains/example");
-            Assert.AreEqual(urls4.Count, 1);
+            Assert.AreEqual(1, urls4.Count);
             Assert.AreEqual(urls4.First(), "http://www.iana.org/domains/example");
             //foreach(string u in urls)
             //{
@@ -126,13 +127,13 @@ namespace Spiderful.Models.Tests
         }
 
         [TestMethod()]
-        public void getUrlsTest_brokenUrl()
+        public void getPagesTest_brokenUrl()
         {
             var emptyList = Enumerable.Empty<string>();
 
-            IEnumerable<string> urls1 = UrlService.getPages("g.ebay.com/");
-            IEnumerable<string> urls2 = UrlService.getPages("ebay");
-            IEnumerable<string> urls3 = UrlService.getPages("");
+            IEnumerable<string> urls1 = UrlService.getLinks("g.ebay.com/");
+            IEnumerable<string> urls2 = UrlService.getLinks("ebay");
+            IEnumerable<string> urls3 = UrlService.getLinks("");
 
             Assert.AreEqual(urls1, emptyList);
             Assert.AreEqual(urls2, emptyList);
@@ -140,10 +141,10 @@ namespace Spiderful.Models.Tests
         }
 
         [TestMethod()]
-        public void getUrlsTest_largeSite()
+        public void getPagesTest_largeSite()
         {
-            int ebay = UrlService.getPages("ebay.co.uk/").Count();
-            int stack = UrlService.getPages("http://stackoverflow.com").Count();
+            int ebay = UrlService.getLinks("ebay.co.uk/").Count();
+            int stack = UrlService.getLinks("http://stackoverflow.com").Count();
                        
             if (ebay + stack < 100)
             {
@@ -151,7 +152,21 @@ namespace Spiderful.Models.Tests
             }
         }
 
-        //TODO rename tests to getPages
-        //TODO tests for getPages containing more than 1 param
+        //TODO tests for getLinks containing more than 1 param
+
+        //TODO multi site links
+        [TestMethod()]
+        public void getMultiPagesTest_simpleTest()
+        {
+            List<string> urls1 = UrlService.getLinks("http://example.com/", false, true, 0).ToList();
+            Assert.AreEqual(1, urls1.Count);
+
+            List<string> urls2 = UrlService.getLinks("http://example.com/", false, true, 1).ToList();
+            Assert.AreEqual(3, urls2.Count);
+
+            List<string> urls3 = UrlService.getLinks("http://example.com/", false, false, 1).ToList();
+            Assert.IsTrue(urls3.Count > 30, "Previous tests suggest the count should be 49, maybe site is down OR function broken. Actual Count: {0}", urls3.Count);
+
+        }
     }
 }
