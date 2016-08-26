@@ -162,11 +162,13 @@ namespace Spiderful.Models.Tests
             Assert.AreEqual(1, urls1.Count);
 
             List<string> urls2 = UrlService.getLinks("http://example.com/", false, true, 1).ToList();
-            Assert.AreEqual(3, urls2.Count);
+            Assert.AreEqual(4, urls2.Count);
 
             List<string> urls3 = UrlService.getLinks("http://example.com/", false, false, 1).ToList();
             Assert.IsTrue(urls3.Count > 30, "Previous tests suggest the count should be 49, maybe site is down OR function broken. Actual Count: {0}", urls3.Count);
 
+            List<string> urls4 = UrlService.getLinks("http://example.com/", false, true, 2).ToList();
+            Assert.IsTrue(urls4.Count > 60, "Previous tests suggest the count should be 81, maybe a link is down OR function broken. Actual Count: {0}", urls4.Count);
         }
     }
 }

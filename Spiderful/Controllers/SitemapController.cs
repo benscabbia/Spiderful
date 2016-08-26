@@ -21,11 +21,11 @@ namespace Spiderful.Controllers
         // GET api/sitemap/5 if Get(int id)
         // GET api/sitemap?url=http://www.google.com for below
         //    /api/sitemap?url=http://www.google.com/index.net&level=15&hostMatch=false
-        public IEnumerable<string> GetLinks(string url, int level = 0, bool hostMatch = true, bool validatePages = true)
+        public IEnumerable<string> GetLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
         {
 
 
-            var linksRoot = UrlService.getLinks(url, hostMatch, validatePages);
+            var linksRoot = UrlService.getLinks(url, hostMatch, validatePages, level);
 
             
             return linksRoot; //+ UrlService.isValidSmart(url);

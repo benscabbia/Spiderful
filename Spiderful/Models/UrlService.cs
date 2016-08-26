@@ -73,26 +73,15 @@ namespace Spiderful.Models
             //if formattedUrl is empty, url is broken
             if (string.IsNullOrEmpty(formattedUrl)) return Enumerable.Empty<string>();
 
-
-
-
+            //always get root urls first
             IEnumerable<string> rootUrls = getSinglePageLinks(formattedUrl, hostMatch, validatePages);
 
-
-            //need a better solution to this
-            if (level == 0)
+            for (int i=0; i<level; i++)
             {
-                return rootUrls;
-
-            }else if(level == 1)
-            {
-                return getManyPageLinks(rootUrls, hostMatch, validatePages);
-
-            }else{
-                return Enumerable.Empty<string>();
+                rootUrls = rootUrls.Union(getManyPageLinks(rootUrls, hostMatch, validatePages));
             }
 
-
+            return rootUrls;
         }
 
         private static IEnumerable<string> getSinglePageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
