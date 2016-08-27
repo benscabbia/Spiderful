@@ -27,10 +27,29 @@ namespace Spiderful.Controllers
 
             var linksRoot = UrlService.getLinks(url, hostMatch, validatePages, level);
 
-            
+
             return linksRoot; //+ UrlService.isValidSmart(url);
 
         }
+
+        //toTest as resetful, conflict with one above
+        public string GetPage(string url)
+        {
+            var page = UrlService.getPage(url);
+            return page;
+        }
+
+        public string GetPageWithSelector(string url, string selector, int index=0)
+        {
+            var page = UrlService.getPageWithSelector(url, selector, index);
+            //https://untappd.com/search?q=leffe, //span[@class='num']
+            //$(".num").first().text() and get value
+
+            return page;
+        }
+
+
+
 
         // POST api/sitemap
         public void Post([FromBody]string value)

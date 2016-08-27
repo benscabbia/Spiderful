@@ -105,7 +105,7 @@ namespace Spiderful.Models.Tests
 
         [TestMethod()]
         public void getPagesTest_simpleTest()
-        {            
+        {
             List<string> urls1 = UrlService.getLinks("http://example.com/").ToList();
             List<string> urls1multi = UrlService.getLinks("http://example.com/", false, false).ToList();
             List<string> urls2 = UrlService.getLinks("example.com/", false, false).ToList();
@@ -113,7 +113,7 @@ namespace Spiderful.Models.Tests
             List<string> urls4 = UrlService.getLinks("http://www.example.com/", false, false).ToList();
 
             Assert.AreEqual(0, urls1.Count); //0 as host != url so its filtered out
-            Assert.AreEqual(1, urls1multi.Count);            
+            Assert.AreEqual(1, urls1multi.Count);
             Assert.AreEqual(1, urls2.Count);
             Assert.AreEqual(urls2.First(), "http://www.iana.org/domains/example");
             Assert.AreEqual(1, urls3.Count);
@@ -145,7 +145,7 @@ namespace Spiderful.Models.Tests
         {
             int ebay = UrlService.getLinks("ebay.co.uk/").Count();
             int stack = UrlService.getLinks("http://stackoverflow.com").Count();
-                       
+
             if (ebay + stack < 100)
             {
                 Assert.Fail("Two sites should have over 100 results, possibly sites are down or something else...");
@@ -169,6 +169,26 @@ namespace Spiderful.Models.Tests
 
             List<string> urls4 = UrlService.getLinks("http://example.com/", false, true, 2).ToList();
             Assert.IsTrue(urls4.Count > 60, "Previous tests suggest the count should be 81, maybe a link is down OR function broken. Actual Count: {0}", urls4.Count);
+        }
+
+        [TestMethod()]
+        public void getPageTest()
+        {
+            var page = UrlService.getPage("http://example.com/");
+            Assert.IsTrue(page.Length> 800, "Previous tests suggest the length should be 1264, maybe a link is down OR function broken. Actual Count: {0}", page.Length);
+        }
+
+        [TestMethod()]
+        public void getPageWithSelectorTest()
+        {
+            var text = UrlService.getPageWithSelector("https://untappd.com/search?q=leffe", "//span[@class='num']");
+            Assert.IsNotNull(text, "Should not be null"); ////"(3.593)"
+
+            var text2 = UrlService.getPageWithSelector("https://untappd.com/search?q=leffe", "//span[@class='num']", 0);
+            Assert.IsNotNull(text2, "Should not be null");
+
+            var text3 = UrlService.getPageWithSelector("https://untappd.com/search?q=leffe", "//span[@class='num']", 4);
+            Assert.IsNotNull(text3, "Should not be null");
         }
     }
 }

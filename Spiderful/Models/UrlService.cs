@@ -168,6 +168,32 @@ namespace Spiderful.Models
             return allLinks.SelectMany(x => x).Distinct();            
 
         }
+
+        public static string getPage(string url)
+        {
+            string formattedUrl = urlFormatValidator(url);
+            if (string.IsNullOrEmpty(formattedUrl)) return "";
+            HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
+            return doc.DocumentNode.OuterHtml;
+        }
+
+        public static string getPageWithSelector(string url, string selector, int index=0)
+        {
+            //need exception handling
+            string formattedUrl = urlFormatValidator(url);
+            if (string.IsNullOrEmpty(formattedUrl)) return "";
+            HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
+            ////div[@class='bla'] or //span[@class='num']
+            var nodes = doc.DocumentNode.SelectNodes(selector);
+            var firstNode = nodes[index];
+            return firstNode.InnerHtml; //first node
+
+            //foreach (HtmlNode node in nodes)
+            //{
+            //    Console.WriteLine(node.OuterHtml);
+            //    Console.WriteLine();
+            //}
+        }
     }
 }
              
