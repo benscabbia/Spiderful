@@ -180,15 +180,27 @@ namespace Spiderful.Models
 
         public static string getPageWithSelector(string url, string selector, int index=0)
         {
-            //need exception handling
-            string formattedUrl = urlFormatValidator(url);
-            if (string.IsNullOrEmpty(formattedUrl)) return "";
-            HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
-            ////div[@class='bla'] or //span[@class='num']
-            var nodes = doc.DocumentNode.SelectNodes(selector);
-            var firstNode = nodes[index];
-            return firstNode.InnerHtml; //first node
+            try
+            {
+                string formattedUrl = urlFormatValidator(url);
+                if (string.IsNullOrEmpty(formattedUrl)) return "";
+                HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
+                ////div[@class='bla'] or //span[@class='num']
+                var nodes = doc.DocumentNode.SelectNodes(selector);
+                var firstNode = nodes[index];
+                return firstNode.InnerHtml; //first node
 
+
+            }
+            catch(NullReferenceException e)
+            {
+                Console.WriteLine("The selector returned a null item");
+                return "";
+            }
+            catch(Exception e)
+            {
+                return "";
+            }
             //foreach (HtmlNode node in nodes)
             //{
             //    Console.WriteLine(node.OuterHtml);
