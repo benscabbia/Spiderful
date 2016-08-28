@@ -2,6 +2,7 @@
 using Spiderful.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -189,6 +190,35 @@ namespace Spiderful.Models.Tests
 
             var text3 = UrlService.getPageWithSelector("https://untappd.com/search?q=leffe", "//span[@class='num']", 4);
             Assert.IsNotNull(text3, "Should not be null");
+        }
+
+        [TestMethod()]
+        public void benchMarker()
+        {
+            ////Task<IEnumerable<string>>
+            //var url = "https://lanext.it";
+
+
+            //Stopwatch sw1 = new Stopwatch();
+            //Stopwatch sw2 = new Stopwatch();
+
+            //sw2.Start();
+            //var urls2 = UrlService.GetLinks2(url, true, true, 1);
+           
+
+            ////List<List<string>> abc = new List<List<string>>();
+            ////abc.Add(urls2.Result.ToList());
+            ////IEnumerable<string> allLinks = abc.SelectMany(x => x).Distinct(); 
+            //sw2.Stop();
+
+            //sw1.Start();
+            //var urls1 = UrlService.getLinks(url, true, true, 1);
+            //sw1.Stop();
+
+
+            //Console.WriteLine("Elapsed={0}", sw1.Elapsed);
+            //Console.WriteLine("Elapsed={0}", sw2.Elapsed);
+
         }
     }
 }

@@ -23,13 +23,8 @@ namespace Spiderful.Controllers
         //    /api/sitemap?url=http://www.google.com/index.net&level=15&hostMatch=false
         public IEnumerable<string> GetLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
         {
-
-
             var linksRoot = UrlService.getLinks(url, hostMatch, validatePages, level);
-
-
             return linksRoot; //+ UrlService.isValidSmart(url);
-
         }
 
         //toTest as resetful, conflict with one above
@@ -42,9 +37,7 @@ namespace Spiderful.Controllers
         public string GetPageWithSelector(string url, string selector, int index=0)
         {
             var page = UrlService.getPageWithSelector(url, selector, index);
-            //https://untappd.com/search?q=leffe, //span[@class='num']
-            //$(".num").first().text() and get value
-
+            //https://untappd.com/search?q=leffe, //span[@class='num'], $(".num").first().text() and get value
             return page;
         }
 

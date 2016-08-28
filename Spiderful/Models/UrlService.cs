@@ -6,6 +6,7 @@ using HtmlAgilityPack;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace Spiderful.Models
 {
@@ -193,6 +194,83 @@ namespace Spiderful.Models
             //    Console.WriteLine(node.OuterHtml);
             //    Console.WriteLine();
             //}
+        }
+
+        //testing alternative method
+        async static Task<IEnumerable<string>> GetAllPagesLinks2(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
+        {
+            var result = await Task.WhenAll(rootUrls.Select(url => GetPageLinks2(url, hostMatch, validatePages)));
+
+            return result.SelectMany(x => x).Distinct();
+        }
+
+        static async Task<IEnumerable<string>> GetPageLinks2(string formattedUrl, bool hostMatch = true, bool validatePages = true)
+        {
+            var htmlDocument = new HtmlDocument();
+
+            try
+            {
+                using (var client = new HttpClient())
+                    htmlDocument.LoadHtml(await client.GetStringAsync(formattedUrl));
+
+                var linkedPages = htmlDocument.DocumentNode
+                                   .Descendants("a")
+                                   .Select(a => a.GetAttributeValue("href", null))
+                                   .Where(u => !string.IsNullOrEmpty(u))
+                                   .Distinct();
+
+                IEnumerable<string> linkedPagesHost = null, linkedPagesValidated = null, linkedPagesValidatedHost = null;
+
+                if (hostMatch)
+                {
+                    var urlHost = new Uri(formattedUrl).Host;
+                    if (urlHost.Substring(0, 4).Equals("www.")) urlHost = urlHost.Substring(4);
+                    //var linkedPagesHost = linkedPages.Where(a => urlHost.All(a.Contains));
+                    linkedPagesHost = linkedPages.Where(a => a.Contains(urlHost));
+                    if (!validatePages) return linkedPagesHost;
+                }
+
+                if (validatePages)
+                {
+                    linkedPagesValidated = linkedPages.Where(p => isValid(p) == true);
+                    if (!hostMatch) return linkedPagesValidated;
+                }
+
+                if (hostMatch && validatePages)
+                {
+                    linkedPagesValidatedHost = linkedPagesHost.Intersect(linkedPagesValidated);
+                    return linkedPagesValidatedHost;
+                }
+                return linkedPages;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return Enumerable.Empty<string>();
+            }
+        }
+        public async static Task<IEnumerable<string>> GetLinks2(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
+        {
+            if (level < 0)
+                throw new ArgumentOutOfRangeException(nameof(level));
+
+            string formattedUrl = urlFormatValidator(url);
+
+            if (string.IsNullOrEmpty(formattedUrl))
+                return Enumerable.Empty<string>();
+
+            var rootUrls = await GetPageLinks2(formattedUrl, hostMatch, validatePages);
+
+            if (level == 0)
+                return rootUrls;
+
+            var links = await GetAllPagesLinks2(rootUrls, hostMatch, validatePages);
+            //broken! 
+            var tasks = await Task.WhenAll(links.Select(link => GetLinks2(link, hostMatch, validatePages, --level)));
+
+            //allLinks.Add(task.Result.ToList());
+
+            return tasks.SelectMany(x => x);
         }
     }
 }
